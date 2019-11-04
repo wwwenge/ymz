@@ -1,16 +1,12 @@
 {
     "name": "wengoooo/ymz",
-    "license": "MIT",
     "authors": [
         {
-            "name": "Wengo",
-            "email": "398711943@qq.com"
+            "name": "wengoooooooo",
+            "email": "468208586@qq.com"
         }
     ],
-    "minimum-stability": "stable",
-    "require": {
-
-    },
+    "require": {},
     "autoload": {
         "psr-4": {
             "Ymz\\": "src/"

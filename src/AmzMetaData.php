@@ -7,6 +7,10 @@ class AmzMetaData {
 
     public static $key = [1888420705, 2576816180, 2347232058, 874813317];
 
+    public function __construct()
+    {
+    }
+
     public static function long2str($v, $w) {
         $len = count($v);
         $n = $len << 2;
@@ -45,6 +49,13 @@ class AmzMetaData {
         return ((($z >> 5 & 0x07ffffff) ^ $y << 2) + (($y >> 3 & 0x1fffffff) ^ $z << 4)) ^ (($sum ^ $y) + ($k[$p & 3 ^ $e] ^ $z));
     }
 
+    private static function parseUnsignedInt($string) {
+        $x = (float)$string;
+        if ($x > (float)2147483647)
+            $x -= (float)"4294967296";
+        return (int)$x;
+    }
+
     private static function fixk($k) {
         if (count($k) < 4) {
             for ($i = count($k); $i < 4; $i++) {
@@ -55,7 +66,7 @@ class AmzMetaData {
     }
     // $str is the string to be encrypted.
     // $key is the encrypt key. It is the same as the decrypt key.
-    public static function encrypt($str, $key) {
+    private static function encrypt($str, $key) {
         if ($str == "") {
             return "";
         }
@@ -73,11 +84,10 @@ class AmzMetaData {
             for ($p = 0; $p < $n; $p++) {
                 $y = $v[$p + 1];
                 $mx = self::mx($sum, $y, $z, $p, $e, $k);
-
                 $z = $v[$p] = self::int32($v[$p] + $mx);
-
             }
             $y = $v[0];
+
             $z = $v[$n] = self::int32($v[$n] + self::mx($sum, $y, $z, $p, $e, $k));
         }
 
@@ -86,7 +96,7 @@ class AmzMetaData {
 
     // $str is the string to be decrypted.
     // $key is the decrypt key. It is the same as the encrypt key.
-    public static function decrypt($str, $key) {
+    private static function decrypt($str, $key) {
         if ($str == "") {
             return "";
         }
@@ -104,10 +114,12 @@ class AmzMetaData {
                 $y = $v[$p] = self::int32($v[$p] - self::mx($sum, $y, $z, $p, $e, $k));
             }
             $z = $v[$n];
+
             $y = $v[0] = self::int32($v[0] - self::mx($sum, $y, $z, $p, $e, $k));
             $sum = self::int32($sum - self::DELTA);
         }
-        return self::long2str($v, true);
+
+        return self::long2str($v, false);
     }
 
     public static function encodeObject($data) {
@@ -118,7 +130,7 @@ class AmzMetaData {
 
     public static function encryptMetaData1($plaintext) {
         $key = AmzMetaData::long2str(AmzMetaData::$key, false);
-        $object = encodeObject(json_decode($plaintext));
+        $object = AmzMetaData::encodeObject(json_decode($plaintext));
         return base64_encode(AmzMetaData::encrypt($object, $key));
     }
 
