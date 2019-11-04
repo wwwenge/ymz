@@ -1,0 +1,25 @@
+{
+    "name": "wengoooo/ymz",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wengo",
+            "email": "398711943@qq.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "Ymz\\": "src/"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}
